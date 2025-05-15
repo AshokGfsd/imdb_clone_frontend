@@ -87,14 +87,14 @@ const EditActor = () => {
         res = await UpdateActor(_id, payload);
       }
       if (res.data._id === _id) {
-        alert(res.message || "Actor updated successfully");
+       console.log(res.message || "Actor updated successfully");
         const list = actors.map((d) => (d._id === _id ? res.data : d));
         updateActors(list);
         navigate(-1);
       }
     } catch (err) {
       console.error(err);
-      alert(err?.response?.data?.message || "Something went wrong");
+     console.log(err?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }

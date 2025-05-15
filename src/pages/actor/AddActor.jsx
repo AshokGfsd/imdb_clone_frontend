@@ -70,7 +70,7 @@ const AddActor = () => {
       if (error?.response?.data?.message === "Token refreshed") {
         TokenRefreshedModal();
       } else {
-        alert(error?.response?.data?.message || "Something went wrong");
+       console.log(error?.response?.data?.message || "Something went wrong");
       }
     } finally {
       setLoading(false);

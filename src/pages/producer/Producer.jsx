@@ -40,7 +40,7 @@ const Producers = ({ viewState, editState, addState }) => {
       if (error?.response?.data?.message === "Token refreshed") {
         TokenRefreshedModal();
       }
-      alert(error?.response?.data?.message || "Something went wrong.");
+     console.log(error?.response?.data?.message || "Something went wrong.");
     }
   };
 

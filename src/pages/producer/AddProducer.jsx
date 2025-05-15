@@ -61,7 +61,7 @@ const AddProducer = () => {
       const res = await CreateProducer(fd);
       if (res.data._id) {
         updateProducers([res.data, ...producers]);
-        alert(res.message || "Producer created successfully");
+       console.log(res.message || "Producer created successfully");
         navigate(-1);
       }
     } catch (error) {
@@ -74,7 +74,7 @@ const AddProducer = () => {
         });
         setErrors(errFields);
       } else {
-        alert(error?.response?.data?.message || "Something went wrong");
+       console.log(error?.response?.data?.message || "Something went wrong");
       }
     } finally {
       setLoading(false);

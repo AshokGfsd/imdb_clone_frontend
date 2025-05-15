@@ -81,14 +81,14 @@ const EditProducer = () => {
         res = await UpdateProducer(_id, payload);
       }
       if (res.data._id === _id) {
-        alert(res.message || "Producer updated successfully");
+       console.log(res.message || "Producer updated successfully");
         const list = producers.map((d) => (d._id == _id ? res.data : d));
         updateProducers(list);
         navigate(-1);
       }
     } catch (err) {
       console.error(err);
-      alert(err?.response?.data?.message || "Something went wrong");
+     console.log(err?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }

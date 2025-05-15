@@ -127,7 +127,7 @@ const EditMovie = () => {
 
       const res = await UpdateMovie(_id, data);
       if (res._id === _id) {
-        alert(res.message || "Movie updated successfully");
+       console.log(res.message || "Movie updated successfully");
         const list = movies.map((d) => (d._id == _id ? res.data : d));
         updateMovies(list);
         navigate(-1);
@@ -136,7 +136,7 @@ const EditMovie = () => {
       if (error?.response?.data?.message === "Token refreshed") {
         TokenRefreshedModal();
       } else {
-        alert(error?.response?.data?.message || "Something went wrong");
+       console.log(error?.response?.data?.message || "Something went wrong");
       }
     } finally {
       setLoading(false);

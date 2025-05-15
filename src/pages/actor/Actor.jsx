@@ -30,7 +30,7 @@ const Actors = ({ viewState, editState, addState }) => {
   const handleDelete = async (id) => {
     try {
       const res = await DeleteActor(id);
-      if (res.actorId === id) {
+      if (res.status == "success") {
         const list = actors.filter((d) => d._id !== id);
         updateActors(list);
       }
@@ -39,7 +39,7 @@ const Actors = ({ viewState, editState, addState }) => {
       if (error?.response?.data?.message === "Token refreshed") {
         TokenRefreshedModal();
       }
-      alert(error?.response?.data?.message || "Something went wrong.");
+      console.log(error?.response?.data?.message || "Something went wrong.");
     }
   };
 
