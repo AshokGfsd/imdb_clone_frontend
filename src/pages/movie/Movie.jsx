@@ -18,7 +18,8 @@ const Movies = ({ viewState, editState, addState }) => {
   const [targetMovie, setTargetMovie] = useState(null);
   const { movies = [] } = useSelector(selectMovie);
 
-  const { TokenRefreshedModal, fetchMovies, updateMovies } = Common();
+  const { TokenRefreshedModal, fetchMovies, updateMovies, showToast } =
+    Common();
 
   useEffect(() => {
     if (!movies.length) fetchMovies({ setLoading });
@@ -32,16 +33,24 @@ const Movies = ({ viewState, editState, addState }) => {
     try {
       setLoading(true);
       const res = await DeleteMovie(id);
-      if (res.movieId === id) {
+      if (res.status == "success") {
         const list = movies.filter((d) => d._id !== id);
         updateMovies(list);
+        showToast({
+          message: res.message || "updated successfully",
+          type: "success",
+        });
       }
-    } catch (error) {
-      console.error(error);
-      if (error?.response?.data?.message === "Token refreshed") {
+    } catch (err) {
+      console.error(err);
+      showToast({
+        message: err?.response?.data?.message || "Something went wrong",
+        type: "error",
+      });
+      if (err?.response?.data?.message === "Token refreshed") {
         TokenRefreshedModal();
       }
-     console.log(error?.response?.data?.message || "Something went wrong.");
+      console.log(err?.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -124,6 +133,5 @@ const Movies = ({ viewState, editState, addState }) => {
     </div>
   );
 };
-
 
 export default Movies;

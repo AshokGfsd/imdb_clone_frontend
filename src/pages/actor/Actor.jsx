@@ -16,7 +16,13 @@ const Actors = ({ viewState, editState, addState }) => {
   const [filter, setFilter] = useState({});
   const [showConfirm, setShowConfirm] = useState(false);
   const [targetActor, setTarget] = useState(null);
-  const { TokenRefreshedModal, fetchActors, navigate, updateActors } = Common();
+  const {
+    TokenRefreshedModal,
+    fetchActors,
+    navigate,
+    updateActors,
+    showToast,
+  } = Common();
   const { actors } = useSelector(selectActor);
 
   useEffect(() => {
@@ -33,13 +39,21 @@ const Actors = ({ viewState, editState, addState }) => {
       if (res.status == "success") {
         const list = actors.filter((d) => d._id !== id);
         updateActors(list);
+        showToast({
+          message: res.message || "updated successfully",
+          type: "success",
+        });
       }
-    } catch (error) {
-      console.error(error);
-      if (error?.response?.data?.message === "Token refreshed") {
+    } catch (err) {
+      console.error(err);
+      showToast({
+        message: err?.response?.data?.message || "Something went wrong",
+        type: "error",
+      });
+      if (err?.response?.data?.message === "Token refreshed") {
         TokenRefreshedModal();
       }
-      console.log(error?.response?.data?.message || "Something went wrong.");
+      console.log(err?.response?.data?.message || "Something went wrong.");
     }
   };
 

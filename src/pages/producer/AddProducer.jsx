@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 const AddProducer = () => {
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
-  const { navigate, updateProducers } = Common();
+  const { navigate, updateProducers, showToast } = Common();
   const [formData, setFormData] = useState({
     name: "",
     gender: "",
@@ -59,22 +59,30 @@ const AddProducer = () => {
       if (imageFile) fd.append("image", imageFile.originFileObj);
 
       const res = await CreateProducer(fd);
-      if (res.data._id) {
+      if (res.status == "success") {
         updateProducers([res.data, ...producers]);
-       console.log(res.message || "Producer created successfully");
+        console.log(res.message || "Producer created successfully");
         navigate(-1);
+        showToast({
+          message: res.message || "updated successfully",
+          type: "success",
+        });
       }
-    } catch (error) {
-      if (error?.response?.data?.message === "Token refreshed") {
+    } catch (err) {
+      showToast({
+        message: err?.response?.data?.message || "Something went wrong",
+        type: "error",
+      });
+      if (err?.response?.data?.message === "Token refreshed") {
         TokenRefreshedModal();
-      } else if (error?.response?.data?.status === "field_error") {
+      } else if (err?.response?.data?.status === "field_error") {
         const errFields = {};
-        error.response.data.error?.forEach((e) => {
+        error.response.data.err?.forEach((e) => {
           errFields[e.field] = e.message;
         });
         setErrors(errFields);
       } else {
-       console.log(error?.response?.data?.message || "Something went wrong");
+        console.log(err?.response?.data?.message || "Something went wrong");
       }
     } finally {
       setLoading(false);

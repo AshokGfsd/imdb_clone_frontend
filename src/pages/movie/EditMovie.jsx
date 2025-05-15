@@ -35,6 +35,7 @@ const EditMovie = () => {
     fetchActors,
     fetchProducers,
     fetchMovies,
+    showToast,
   } = Common();
 
   useEffect(() => {
@@ -126,17 +127,25 @@ const EditMovie = () => {
       if (imageFile) data.append("poster", imageFile);
 
       const res = await UpdateMovie(_id, data);
-      if (res._id === _id) {
-       console.log(res.message || "Movie updated successfully");
+      if (res.data._id === _id) {
+        console.log(res.message || "Movie updated successfully");
         const list = movies.map((d) => (d._id == _id ? res.data : d));
         updateMovies(list);
         navigate(-1);
+        showToast({
+          message: res.message || "updated successfully",
+          type: "success",
+        });
       }
-    } catch (error) {
-      if (error?.response?.data?.message === "Token refreshed") {
+    } catch (err) {
+      showToast({
+        message: err?.response?.data?.message || "Something went wrong",
+        type: "error",
+      });
+      if (err?.response?.data?.message === "Token refreshed") {
         TokenRefreshedModal();
       } else {
-       console.log(error?.response?.data?.message || "Something went wrong");
+        console.log(err?.response?.data?.message || "Something went wrong");
       }
     } finally {
       setLoading(false);

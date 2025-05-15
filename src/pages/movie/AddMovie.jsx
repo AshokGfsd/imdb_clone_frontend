@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { selectActor } from "../../features/actor/actorSlice";
 import { selectProducer } from "../../features/producer/producerSlice";
 import "./AddMovie.css";
+import { selectMovie } from "../../features/movie/moviesSlice";
 
 const AddMovie = () => {
   const [formData, setFormData] = useState({
@@ -28,8 +29,9 @@ const AddMovie = () => {
     navigate,
     fetchActors,
     fetchProducers,
+    showToast,
   } = Common();
-
+  const { movies = [] } = useSelector(selectMovie);
   const onClose = () => {
     setFormData({
       name: "",
@@ -80,17 +82,26 @@ const AddMovie = () => {
       if (imageFile) data.append("poster", imageFile);
 
       const res = await CreateMovie(data);
-      if (res._id) {
+      if (res.status == "success") {
         const list = [res, ...movies];
         updateMovies(list);
         navigate(-1);
+        showToast({
+          message: res.message || "updated successfully",
+          type: "success",
+        });
       }
-    } catch (error) {
-      if (error?.response?.data?.message === "Token refreshed") {
+    } catch (err) {
+      showToast({
+        message: err?.response?.data?.message || "Something went wrong",
+        type: "error",
+      });
+      if (err?.response?.data?.message === "Token refreshed") {
         TokenRefreshedModal();
       } else {
-       console.log(error?.response?.data?.message || "Something went wrong");
+        console.log(err?.response?.data?.message || "Something went wrong");
       }
+      console.log(err || "Something went wrong");
     } finally {
       setLoading(false);
     }

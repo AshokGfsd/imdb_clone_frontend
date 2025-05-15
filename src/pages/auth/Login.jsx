@@ -21,7 +21,7 @@ const Login = () => {
     setLoading(true);
     try {
       const res = await LoginUser({ email, password });
-      if (res.data._id) {
+      if (res.status == "success") {
         localStorage.setItem("accessToken", res.data.token);
         showToast(res?.message || "Something went wrong", res.status);
         setTimeout(() => {

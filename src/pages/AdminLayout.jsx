@@ -83,8 +83,7 @@ const AdminLayout = ({ children }) => {
 
       <div className="content">
         {children}
-
-        
+        <ToastOverlay />
       </div>
     </div>
   );

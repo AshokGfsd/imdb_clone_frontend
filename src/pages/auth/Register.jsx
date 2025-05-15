@@ -16,20 +16,20 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  const { toast, setToast } = Common();
+  const { toast, showToast } = Common();
 
   const onFinish = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const res = await RegisterUser({ name, email, password });
-      setToast({
+      showToast({
         message: res?.message,
         type: res.status,
       });
       navigate("/login");
     } catch (err) {
-      setToast({
+      showToast({
         message: err.response?.data?.message || "Something went wrong",
         type: "error",
       });
@@ -171,7 +171,7 @@ const Register = () => {
       <ToastOverlay
         message={toast.message}
         type={toast.type}
-        onClose={() => setToast({ message: "", type: "" })}
+        onClose={() => showToast({ message: "", type: "" })}
       />
     </div>
   );

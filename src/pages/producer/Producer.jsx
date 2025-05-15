@@ -16,7 +16,7 @@ const Producers = ({ viewState, editState, addState }) => {
   const [filter, setFilter] = useState({});
   const [showConfirm, setShowConfirm] = useState(false);
   const [targetProducer, setTarget] = useState(null);
-  const { TokenRefreshedModal, fetchProducers, navigate, updateProducers } =
+  const { TokenRefreshedModal, fetchProducers, showToast, updateProducers } =
     Common();
   const { producers = [] } = useSelector(selectProducer);
 
@@ -34,13 +34,21 @@ const Producers = ({ viewState, editState, addState }) => {
       if (res.status === "success") {
         const list = producers.filter((d) => d._id !== id);
         updateProducers(list);
+        showToast({
+          message: res.message || "updated successfully",
+          type: "success",
+        });
       }
-    } catch (error) {
-      console.error(error);
-      if (error?.response?.data?.message === "Token refreshed") {
+    } catch (err) {
+      console.error(err);
+      if (err?.response?.data?.message === "Token refreshed") {
         TokenRefreshedModal();
       }
-     console.log(error?.response?.data?.message || "Something went wrong.");
+      showToast({
+        message: err?.response?.data?.message || "Something went wrong",
+        type: "error",
+      });
+      console.log(err?.response?.data?.message || "Something went wrong.");
     }
   };
 

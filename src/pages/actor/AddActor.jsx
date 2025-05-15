@@ -18,7 +18,7 @@ const AddActor = () => {
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [errors, setErrors] = useState({});
-  const { TokenRefreshedModal, navigate, updateActors } = Common();
+  const { TokenRefreshedModal, navigate, updateActors, showToast } = Common();
 
   const onInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -60,17 +60,25 @@ const AddActor = () => {
       }
 
       const res = await CreateActor(data);
-      if (res._id) {
+      if (res.status == "success") {
+        showToast({
+          message: res.message || "Actor Added successfully",
+          type: "success",
+        });
         const list = [res.data, ...actors];
         updateActors(list);
         navigate(-1);
       }
-    } catch (error) {
-      console.log(error);
-      if (error?.response?.data?.message === "Token refreshed") {
+    } catch (err) {
+      console.log(err);
+      showToast({
+        message: err?.response?.data?.message || "Something went wrong",
+        type: "error",
+      });
+      if (err?.response?.data?.message === "Token refreshed") {
         TokenRefreshedModal();
       } else {
-       console.log(error?.response?.data?.message || "Something went wrong");
+        console.log(err?.response?.data?.message || "Something went wrong");
       }
     } finally {
       setLoading(false);

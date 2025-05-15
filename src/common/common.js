@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { GetActor, GetProducers, GetMovie } from "../services/Index";
 import { actorActions } from "../features/actor/actorSlice";
 import { producerActions } from "../features/producer/producerSlice";
 import { movieActions } from "../features/movie/moviesSlice";
+import { selectToast, showToastWithTimeout } from "../features/toast/toastSlice";
 
 const Common = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [toast, setToast] = useState({ message: "", type: "" });
+  const toast = useSelector(selectToast);
 
   const LogoutModal = () => {
     localStorage.removeItem("accessToken");
@@ -28,11 +29,11 @@ const Common = () => {
         message: "Data fetched successfully!",
         type: "success",
       });
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
 
       showToast({
-        message: error?.response?.data?.message || "Something went wrong",
+        message: err?.response?.data?.message || "Something went wrong",
         type: "error",
       });
     } finally {
@@ -71,14 +72,14 @@ const Common = () => {
         message: res?.message || "Movies fetched successfully!",
         type: "success",
       });
-    } catch (error) {
-      console.error(error);
-      if (error?.response?.data?.message === "Token refreshed") {
+    } catch (err) {
+      console.error(err);
+      if (err?.response?.data?.message === "Token refreshed") {
         handleTokenExpired();
       } else {
         // Set error toast
         showToast({
-          message: error?.response?.data?.message || "Failed to fetch Movies",
+          message: err?.response?.data?.message || "Failed to fetch Movies",
           type: "error",
         });
       }
@@ -91,11 +92,8 @@ const Common = () => {
   const updateMovies = (list = []) => {
     dispatch(movieActions(list));
   };
-  const showToast = ({ message, type = "success" }) => {
-    setToast({ message, type });
-    setTimeout(() => {
-      setToast({ message: "", type: "" });
-    }, 3000);
+  const showToast = (toastMessage) => {
+    dispatch(showToastWithTimeout(toastMessage));
   };
   const onClose = () => {
     setToast({ message: "", type: "" });

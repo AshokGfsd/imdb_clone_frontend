@@ -13,7 +13,7 @@ const EditProducer = () => {
   const { producers = [] } = useSelector(selectProducer);
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
-  const { fetchProducers, navigate, updateProducers } = Common();
+  const { fetchProducers, navigate, updateProducers, showToast } = Common();
   const [formData, setFormData] = useState({
     name: "",
     gender: "",
@@ -81,14 +81,22 @@ const EditProducer = () => {
         res = await UpdateProducer(_id, payload);
       }
       if (res.data._id === _id) {
-       console.log(res.message || "Producer updated successfully");
+        showToast({
+          message: res.message || "updated successfully",
+          type: "success",
+        });
+        console.log(res.message || "Producer updated successfully");
         const list = producers.map((d) => (d._id == _id ? res.data : d));
         updateProducers(list);
         navigate(-1);
       }
     } catch (err) {
+      showToast({
+        message: err?.response?.data?.message || "Something went wrong",
+        type: "error",
+      });
       console.error(err);
-     console.log(err?.response?.data?.message || "Something went wrong");
+      console.log(err?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
